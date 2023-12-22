@@ -60,17 +60,38 @@ function DOMtoString(selector) {
     console.log(moves);
     // selectTruePath(moves);
     let fromAddress, toAddress, startDate, EndDate;
-    let counter = 0;
+    let counter = 0,
+      distance = 0,
+      moved = false;
     moves.map((move, index) => {
-      if (move["From Address"] !== move["To Address"] && counter === 0) {
+      // no recordes to display
+      if (move["Start Date"] === "No records to display.") {
+        console.log("لا يكــــــــــــــــــــــــن");
+      }
+      // know if didn't move
+      distance += +move["Distance Travelled"];
+      // get first move (fromAddress & startDate)
+      if (
+        move["From Address"] !== move["To Address"] &&
+        counter === 0 &&
+        +move["Distance Travelled"] > 10
+      ) {
+        moved = true;
         fromAddress = move["From Address"];
         startDate = move["Start Date"].split(" ")[1];
         counter++;
       }
-      if (move["From Address"] !== move["To Address"]) {
+      // get last move (toAddress & endDate)
+      if (
+        move["From Address"] !== move["To Address"] &&
+        +move["Distance Travelled"] > 5
+      ) {
         toAddress = move["To Address"];
         EndDate = move["End Date"].split(" ")[1];
       }
+
+      // fix bug of select last move
+      // last position is changed in from address without matched with to address in above column
       if (
         index < moves.length - 1 &&
         move["To Address"] !== moves[index + 1]["From Address"]
@@ -79,26 +100,18 @@ function DOMtoString(selector) {
         EndDate = moves[index + 1]["End Date"].split(" ")[1];
       }
     });
-    console.log(fromAddress);
-    console.log(toAddress);
-    console.log(startDate);
-    console.log(EndDate);
+    if (distance <= 10 || !moved) {
+      fromAddress = "";
+      toAddress = "";
+      startDate = "";
+      EndDate = "";
+      console.log("لا يكــــــــــــــــــــــــن");
+    } else {
+      console.log(fromAddress);
+      console.log(toAddress);
+      console.log(startDate);
+      console.log(EndDate);
+    }
   }
   return selector.outerHTML;
-}
-
-function selectTruePath(moves) {
-  let fromAddress, toAddress, startDate, EndDate;
-  let counter = 0;
-  moves.map((move, index) => {
-    if (move["From Address"] !== move["To Address"] && counter === 0) {
-      fromAddress = move["From Address"];
-      startDate = move["Start Date"].split(" ")[1];
-      counter++;
-    }
-    if (move["From Address"] !== move["To Address"]) {
-      toAddress = move["To Address"];
-      EndDate = move["End Date"].split(" ")[1];
-    }
-  });
 }
