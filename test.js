@@ -477,73 +477,112 @@ const moves = [
     "": "30.887475",
   },
 ];
-let fromAddress, toAddress, startDate, EndDate;
-let counter = 0,
+let fromAddress = "",
+  toAddress = "",
+  startDate = "",
+  EndDate = "",
+  counter = 0,
   distance = 0,
-  moved = false;
+  tempArr = [],
+  moved = false,
+  backCheck = false;
 
 const indexOfFirstObject = moves.findIndex(
   (obj) => obj["Distance Travelled"] > 15
 );
+
 const reversemoves = [...moves].reverse();
 const indexOfLastObject =
   moves.length -
   reversemoves.findIndex((obj) => obj["Distance Travelled"] > 15) -
   1;
 
-console.log(indexOfFirstObject, indexOfLastObject);
+// console.log(indexOfFirstObject, indexOfLastObject);
 if (indexOfFirstObject !== -1 && indexOfLastObject !== -1) {
-  // Select objects above the first one with a value of 50
-  const objectsAboveFirst = moves.slice(0, indexOfFirstObject);
+  // Select objects above the first
+  const objectsAboveFirst = moves
+    .slice(0, indexOfFirstObject)
+    .map((obj) => {
+      if (!tempArr.includes(obj["From Address"])) {
+        tempArr.push(obj["From Address"]);
+        return obj["From Address"];
+      } else if (!tempArr.includes(obj["To Address"])) {
+        tempArr.push(obj["To Address"]);
+        return obj["To Address"];
+      }
+    })
+    .filter(Boolean);
 
-  // Select objects below the last one with a value of 50
-  const objectsBelowLast = moves.slice(indexOfLastObject + 1);
-  console.log(objectsBelowLast.hasOwnProperty("From Address"));
+  tempArr.splice(0, tempArr.length);
+
+  // Select objects below the last
+  const objectsBelowLast = moves
+    .slice(indexOfLastObject + 1)
+    .map((obj) => {
+      if (!tempArr.includes(obj["From Address"])) {
+        tempArr.push(obj["From Address"]);
+        return obj["From Address"];
+      } else if (!tempArr.includes(obj["To Address"])) {
+        tempArr.push(obj["To Address"]);
+        return obj["To Address"];
+      }
+    })
+    .filter(Boolean);
+
+  const commonElements = objectsAboveFirst.filter((element) =>
+    objectsBelowLast.includes(element)
+  );
+  if (commonElements.length !== 0) backCheck = true;
+  console.log(commonElements); // Output: [3, 4, 5]
   console.log("Objects above the first one:", objectsAboveFirst);
   console.log("Objects below the last one:", objectsBelowLast);
 } else {
-  console.log("Objects with value 50 not found in the array.");
+  console.log("Error in select indexing");
 }
-moves.map((move, index) => {
-  // know if didn't move
-  distance += +move["Distance Travelled"];
-  // get first move (fromAddress & startDate)
-  if (
-    move["From Address"] !== move["To Address"] &&
-    counter === 0 &&
-    +move["Distance Travelled"] > 10
-  ) {
-    moved = true;
-    fromAddress = move["From Address"];
-    startDate = move["Start Date"].split(" ")[1];
-    counter++;
-  }
-  // get last move (toAddress & endDate)
-  if (
-    move["From Address"] !== move["To Address"] &&
-    +move["Distance Travelled"] > 5
-  ) {
-    toAddress = move["To Address"];
-    EndDate = move["End Date"].split(" ")[1];
-  }
 
-  // fix bug of select last move
-  // last position is changed in from address without matched with to address in above column
-  if (
-    index < moves.length - 1 &&
-    move["To Address"] !== moves[index + 1]["From Address"]
-  ) {
-    toAddress = moves[index + 1]["To Address"];
-    EndDate = moves[index + 1]["End Date"].split(" ")[1];
-  }
-});
-if (distance <= 10 || !moved) {
+if (!backCheck)
+  moves.map((move, index) => {
+    // know if didn't move
+    distance += +move["Distance Travelled"];
+    // get first move (fromAddress & startDate)
+    if (
+      move["From Address"] !== move["To Address"] &&
+      counter === 0 &&
+      +move["Distance Travelled"] > 10
+    ) {
+      moved = true;
+      fromAddress = move["From Address"];
+      startDate = move["Start Date"].split(" ")[1];
+      counter++;
+    }
+    // get last move (toAddress & endDate)
+    if (
+      move["From Address"] !== move["To Address"] &&
+      +move["Distance Travelled"] > 5
+    ) {
+      toAddress = move["To Address"];
+      EndDate = move["End Date"].split(" ")[1];
+    }
+
+    // fix bug of select last move
+    // last position is changed in from address without matched with to address in above column
+    if (
+      index < moves.length - 1 &&
+      move["To Address"] !== moves[index + 1]["From Address"]
+    ) {
+      toAddress = moves[index + 1]["To Address"];
+      EndDate = moves[index + 1]["End Date"].split(" ")[1];
+    }
+  });
+else {
+}
+if ((distance <= 10 || !moved) && !backCheck) {
   fromAddress = "";
   toAddress = "";
   startDate = "";
   EndDate = "";
   console.log("لا يكــــــــــــــــــــــــن");
-} else {
+} else if (fromAddress !== "") {
   console.log(fromAddress);
   console.log(toAddress);
   console.log(startDate);
