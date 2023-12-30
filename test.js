@@ -484,6 +484,7 @@ let fromAddress = "",
   counter = 0,
   distance = 0,
   tempArr = [],
+  backMoves = [],
   moved = false,
   backCheck = false;
 
@@ -575,6 +576,8 @@ if (!backCheck)
     }
   });
 else {
+  let backMoves = moves.filter((move) => move["Distance Travelled"] > 15);
+  console.log(backMoves);
 }
 if ((distance <= 10 || !moved) && !backCheck) {
   fromAddress = "";
