@@ -59,17 +59,76 @@ function DOMtoString(selector) {
     // Display the resulting array of objects
     console.log(moves);
     // selectTruePath(moves);
-    let fromAddress, toAddress, startDate, EndDate;
-    let counter = 0,
-      distance = 0,
-      moved = false;
-    moves.map((move, index) => {
-      // no recordes to display
-      if (move["Start Date"] === "No records to display.") {
-        console.log("لا يكــــــــــــــــــــــــن");
-      }
+    let fromAddress = "",
+      toAddress = "",
+      startDate = "",
+      EndDate = "",
+      counter = 0,
+      biggestDistance = 0,
+      tempArr = [],
+      backMoves = [],
+      moved = false,
+      backCheck = false;
+    let totalDistance = 0;
+    let totalDistances = [];
+
+    const indexOfFirstObject = moves.findIndex(
+      (obj) => obj["Distance Travelled"] > 15
+    );
+
+    const reversemoves = [...moves].reverse();
+    const indexOfLastObject =
+      moves.length -
+      reversemoves.findIndex((obj) => obj["Distance Travelled"] > 15) -
+      1;
+
+    // console.log(indexOfFirstObject, indexOfLastObject);
+    if (indexOfFirstObject !== -1 && indexOfLastObject !== -1) {
+      // Select objects above the first
+      const objectsAboveFirst = moves
+        .slice(0, indexOfFirstObject)
+        .map((obj) => {
+          if (!tempArr.includes(obj["From Address"])) {
+            tempArr.push(obj["From Address"]);
+            return obj["From Address"];
+          } else if (!tempArr.includes(obj["To Address"])) {
+            tempArr.push(obj["To Address"]);
+            return obj["To Address"];
+          }
+        })
+        .filter(Boolean);
+
+      tempArr.splice(0, tempArr.length);
+
+      // Select objects below the last
+      const objectsBelowLast = moves
+        .slice(indexOfLastObject + 1)
+        .map((obj) => {
+          if (!tempArr.includes(obj["From Address"])) {
+            tempArr.push(obj["From Address"]);
+            return obj["From Address"];
+          } else if (!tempArr.includes(obj["To Address"])) {
+            tempArr.push(obj["To Address"]);
+            return obj["To Address"];
+          }
+        })
+        .filter(Boolean);
+
+      const commonElements = objectsAboveFirst.filter((element) =>
+        objectsBelowLast.includes(element)
+      );
+      if (commonElements.length !== 0) backCheck = true;
+      console.log(commonElements); // Output: [3, 4, 5]
+      // console.log("Objects above the first one:", objectsAboveFirst);
+      // console.log("Objects below the last one:", objectsBelowLast);
+    } else {
+      console.log("Error in select indexing");
+    }
+
+    backMoves = moves.map((move, index) => {
       // know if didn't move
-      distance += +move["Distance Travelled"];
+      if (+move["Distance Travelled"] > biggestDistance)
+        biggestDistance = +move["Distance Travelled"];
       // get first move (fromAddress & startDate)
       if (
         move["From Address"] !== move["To Address"] &&
@@ -99,14 +158,41 @@ function DOMtoString(selector) {
         toAddress = moves[index + 1]["To Address"];
         EndDate = moves[index + 1]["End Date"].split(" ")[1];
       }
+      if (backCheck) {
+        totalDistance += +move["Distance Travelled"];
+        totalDistances.push(totalDistance);
+        move["Total Distance"] = totalDistance;
+        return move;
+      }
     });
-    if (distance <= 10 || !moved) {
+    if (backCheck) {
+      const closestNumber = findClosestNumber(
+        totalDistance / 2,
+        totalDistances
+      );
+      // console.log("Closest number:", closestNumber);
+      targetBackMoves = backMoves.filter(
+        (move) => move["Total Distance"] === closestNumber
+      );
+      lastMove = targetBackMoves[targetBackMoves.length - 1];
+      toAddress = lastMove["To Address"] + "والعودة";
+    }
+
+    function findClosestNumber(target, numbers) {
+      return numbers.reduce((closest, current) => {
+        return Math.abs(current - target) < Math.abs(closest - target)
+          ? current
+          : closest;
+      });
+    }
+
+    if ((biggestDistance < 15 || !moved) && !backCheck) {
       fromAddress = "";
       toAddress = "";
       startDate = "";
       EndDate = "";
       console.log("لا يكــــــــــــــــــــــــن");
-    } else {
+    } else if (fromAddress !== "") {
       console.log(fromAddress);
       console.log(toAddress);
       console.log(startDate);
