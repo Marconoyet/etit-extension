@@ -17,6 +17,11 @@ async function createDate(client, newObj) {
   console.log(`New date is added with the following id: ${result.insertedId}`);
 }
 
+async function searchVichele(client, vichele) {
+  const result = await client.db("tatb3").collection("dates").insertOne(newObj);
+  console.log(`New date is added with the following id: ${result.insertedId}`);
+}
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
