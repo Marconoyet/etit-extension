@@ -6,7 +6,6 @@ function main() {
 
 function onWindowLoad() {
   var message = document.querySelector("#message");
-  console.log();
   chrome.tabs
     .query({ active: true, currentWindow: true })
     .then(function (tabs) {
@@ -21,7 +20,7 @@ function onWindowLoad() {
       });
     })
     .then(function (results) {
-      console.log(results[0].result);
+      console.log(results);
       message.innerHTML = results[0].result;
     })
     .catch(function (error) {
@@ -31,6 +30,7 @@ function onWindowLoad() {
 }
 
 function DOMtoString(selector) {
+  let result = "";
   if (selector) {
     selector = document.querySelector(selector);
     if (!selector) return "ERROR: querySelector failed to find node";
@@ -71,17 +71,17 @@ function DOMtoString(selector) {
       backCheck = false;
     let totalDistance = 0;
     let totalDistances = [];
+    let placeMoved = moves[0]["From Address"];
 
     const indexOfFirstObject = moves.findIndex(
-      (obj) => obj["Distance Travelled"] > 15
+      (obj) => obj["Distance Travelled"] > 5
     );
 
     const reversemoves = [...moves].reverse();
     const indexOfLastObject =
       moves.length -
-      reversemoves.findIndex((obj) => obj["Distance Travelled"] > 15) -
+      reversemoves.findIndex((obj) => obj["Distance Travelled"] > 5) -
       1;
-
     // console.log(indexOfFirstObject, indexOfLastObject);
     if (indexOfFirstObject !== -1 && indexOfLastObject !== -1) {
       // Select objects above the first
@@ -127,13 +127,18 @@ function DOMtoString(selector) {
 
     backMoves = moves.map((move, index) => {
       // know if didn't move
-      if (+move["Distance Travelled"] > biggestDistance)
+      if (+move["Distance Travelled"] > biggestDistance) {
         biggestDistance = +move["Distance Travelled"];
+      }
+      if (placeMoved !== move["From Address"]) {
+        placeMoved = true;
+      }
+
       // get first move (fromAddress & startDate)
       if (
         move["From Address"] !== move["To Address"] &&
         counter === 0 &&
-        +move["Distance Travelled"] > 10
+        +move["Distance Travelled"] > 5
       ) {
         moved = true;
         fromAddress = move["From Address"];
@@ -175,7 +180,7 @@ function DOMtoString(selector) {
         (move) => move["Total Distance"] === closestNumber
       );
       lastMove = targetBackMoves[targetBackMoves.length - 1];
-      toAddress = lastMove["To Address"] + "والعودة";
+      toAddress = lastMove["To Address"] + " والعودة ";
     }
 
     function findClosestNumber(target, numbers) {
@@ -185,19 +190,35 @@ function DOMtoString(selector) {
           : closest;
       });
     }
-
-    if ((biggestDistance < 15 || !moved) && !backCheck) {
+    if (!moved) {
+      backCheck = false;
+    }
+    if ((biggestDistance < 5 || !moved) && !backCheck) {
       fromAddress = "";
       toAddress = "";
       startDate = "";
       EndDate = "";
-      console.log("لا يكــــــــــــــــــــــــن");
+      result = `<div>لا يكــــــــــــــــــــــــن</div> <br/> <div><strong>Total Distance</strong> ${totalDistance}</div> `;
     } else if (fromAddress !== "") {
       console.log(fromAddress);
       console.log(toAddress);
       console.log(startDate);
       console.log(EndDate);
+      result = `<div><strong>From:</strong> ${fromAddress}</div> <br/>
+                <div><strong>To:</strong> ${toAddress}</div> <br/>
+                <div><strong>Start Move Time:</strong> ${startDate}</div> <br/>
+                <div><strong>End Move Time:</strong> ${EndDate}</div> <br/>
+                <div><strong>Total Distance</strong> ${totalDistance}</div> <br/>
+      `;
+    } else {
+      result = `<div><strong>totalDistance:</strong> ${totalDistance}</div> <br/>
+                <div><strong>moved:</strong> ${moved}</div> <br/>
+                <div><strong>backCheck:</strong> ${backCheck}</div> <br/>
+                <div><strong>placeMoved:</strong> ${placeMoved}</div> <br/>
+                <div><strong>From:</strong> ${fromAddress}</div> <br/>
+                <div><strong>biggestDistance:</strong> ${biggestDistance}</div> <br/>
+      `;
     }
   }
-  return selector.outerHTML;
+  return result;
 }
