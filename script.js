@@ -70,6 +70,7 @@ function DOMtoString(selector) {
       moved = false,
       backCheck = false;
     let totalDistance = 0;
+    let distance = 0;
     let totalDistances = [];
     let placeMoved = moves[0]["From Address"];
 
@@ -127,6 +128,7 @@ function DOMtoString(selector) {
 
     backMoves = moves.map((move, index) => {
       // know if didn't move
+      distance += +move["Distance Travelled"];
       if (+move["Distance Travelled"] > biggestDistance) {
         biggestDistance = +move["Distance Travelled"];
       }
@@ -198,7 +200,9 @@ function DOMtoString(selector) {
       toAddress = "";
       startDate = "";
       EndDate = "";
-      result = `<div>لا يكــــــــــــــــــــــــن</div> <br/> <div><strong>Total Distance</strong> ${totalDistance}</div> `;
+      result = `<div>لا يكــــــــــــــــــــــــن</div> <br/> <div><strong>Total Distance</strong> ${distance.toFixed(
+        2
+      )} KM</div> `;
     } else if (fromAddress !== "") {
       console.log(fromAddress);
       console.log(toAddress);
@@ -208,7 +212,9 @@ function DOMtoString(selector) {
                 <div><strong>To:</strong> ${toAddress}</div> <br/>
                 <div><strong>Start Move Time:</strong> ${startDate}</div> <br/>
                 <div><strong>End Move Time:</strong> ${EndDate}</div> <br/>
-                <div><strong>Total Distance</strong> ${totalDistance}</div> <br/>
+                <div><strong>Total Distance</strong> ${distance.toFixed(
+                  2
+                )} KM</div> <br/>
       `;
     } else {
       result = `<div><strong>totalDistance:</strong> ${totalDistance}</div> <br/>
