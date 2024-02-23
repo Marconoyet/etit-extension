@@ -88,12 +88,9 @@ function DOMtoString(selector) {
       moved = false,
       backCheck = false;
     let totalDistance = 0;
-<<<<<<< HEAD
     let travelledDistance = 0;
-    maxSpeed = 0;
-=======
-    let distance = 0;
->>>>>>> d2ba8795104bc39cc2bf5830da263606e93625a7
+    let maxSpeed = 0;
+
     let totalDistances = [];
     let carNumber = moves[0]["Plate No."];
     let placeMoved = moves[0]["From Address"];
@@ -152,11 +149,9 @@ function DOMtoString(selector) {
 
     backMoves = moves.map((move, index) => {
       // know if didn't move
-<<<<<<< HEAD
+
       travelledDistance += +move["Distance Travelled"];
-=======
-      distance += +move["Distance Travelled"];
->>>>>>> d2ba8795104bc39cc2bf5830da263606e93625a7
+
       if (+move["Distance Travelled"] > biggestDistance) {
         biggestDistance = +move["Distance Travelled"];
       }
@@ -232,21 +227,16 @@ function DOMtoString(selector) {
       toAddress = "";
       startDate = "";
       EndDate = "";
-<<<<<<< HEAD
+
       result.dayDate = dayDate;
       result.carNumber = carNumber;
       result.tabContent = `لا يكـــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــن`;
-=======
-      result = `<div>لا يكــــــــــــــــــــــــن</div> <br/> <div><strong>Total Distance</strong> ${distance.toFixed(
-        2
-      )} KM</div> `;
->>>>>>> d2ba8795104bc39cc2bf5830da263606e93625a7
     } else if (fromAddress !== "") {
       console.log(fromAddress);
       console.log(toAddress);
       console.log(startDate);
       console.log(EndDate);
-<<<<<<< HEAD
+
       result.from = replaceCommas(removeExtraCommas(fromAddress));
       result.to = replaceCommas(removeExtraCommas(toAddress));
       result.start = startDate;
@@ -257,16 +247,6 @@ function DOMtoString(selector) {
       result.totalDistance = `${travelledDistance.toFixed(2)} KM`;
       var timeDifference = calculateTimeDifference(startDate, EndDate);
       result.totalTime = `${timeDifference} H`;
-=======
-      result = `<div><strong>From:</strong> ${fromAddress}</div> <br/>
-                <div><strong>To:</strong> ${toAddress}</div> <br/>
-                <div><strong>Start Move Time:</strong> ${startDate}</div> <br/>
-                <div><strong>End Move Time:</strong> ${EndDate}</div> <br/>
-                <div><strong>Total Distance</strong> ${distance.toFixed(
-                  2
-                )} KM</div> <br/>
-      `;
->>>>>>> d2ba8795104bc39cc2bf5830da263606e93625a7
     } else {
       // result = `<div><strong>totalDistance:</strong> ${totalDistance}</div> <br/>
       //           <div><strong>moved:</strong> ${moved}</div> <br/>
