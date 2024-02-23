@@ -1,3 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: "Fredoka", sans-serif;
+}
 .container {
-  width: 500px;
+  width: 600px;
+}
+h2 {
+  font-size: 22px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab {
+  display: flex;
+  justify-content: space-between; /* Distribute space between tabs */
+  border: 1px solid #66d9e8;
+  background-color: #e3fafc;
+}
+
+.tablinks {
+  width: 33%;
+}
+
+.tab button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  flex-grow: 1; /* Tabs will take up equal space */
+  text-align: center;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tab button:hover {
+  background-color: #c5f6fa;
+}
+
+.tab button.active {
+  background-color: #15aabf;
+  color: #fff;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  /* border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px; */
+  padding: 12px 24px;
+  border: 1.5px solid #66d9e8;
+  background-color: #e3fafc;
+  border-top: none;
+  font-family: "Fredoka", sans-serif;
+}
+.car-code {
+  text-align: center;
+  margin: 20px 0 25px 0;
+  font-family: "Cairo", sans-serif;
+  font-weight: 900;
+}
+
+.from-destination,
+.to-destination {
+  display: flex;
+  background-color: #c5f6fa;
+  border: 2px solid #66d9e8;
+
+  border-radius: 22px;
+  margin-bottom: 15px;
+}
+.from,
+.to {
+  background-color: #3bc9db;
+  width: 15%;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  color: #fff;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+}
+.from-place,
+.to-place {
+  display: inline-block;
+  padding: 12px 24px;
+  text-align: center;
+  flex: 1;
+  font-family: "Cairo", sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+}
+.from-time,
+.to-time {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #c2255c;
+  font-weight: 500;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  margin-top: 28px;
+  border: 1.5px solid #66d9e8;
+}
+.row {
+  display: flex;
+  border-bottom: 1px solid #66d9e8;
+  font-weight: 500;
+}
+.cell {
+  padding: 10px;
+  width: 33%;
+  text-align: center;
+  border-right: 2px solid #66d9e8;
+  font-size: 16px;
+}
+.cell:last-child {
+  border-right: none;
+}
+.header-row {
+  background-color: #c2255c;
+
+  color: #fff; /* Background color for header row */
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.record {
+  border: none;
+  font-size: 16px;
+  background-color: #c2255c;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 15px;
+  text-align: center;
+  margin: 35px 0 20px 0;
+  cursor: pointer;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s;
+}
+.record:hover {
+  background-color: #a61e4d;
 }

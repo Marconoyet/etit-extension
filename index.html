@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:slnt,wght@-11..11,200..1000&family=Fredoka:wdth,wght@75..125,300..700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
 
     <!-- Include SheetJS library -->
@@ -10,8 +16,61 @@
   </head>
   <body>
     <div class="container">
-      <div id="message"></div>
+      <!-- <div id="message"></div> -->
+      <div class="tab">
+        <button class="tablinks" data-tab="Tab1" id="defaultOpen">
+          Fast Detect
+        </button>
+        <button class="tablinks" data-tab="Tab2">Tab 2</button>
+        <button class="tablinks" data-tab="Tab3">Tab 3</button>
+      </div>
+      <div id="Tab1" class="tabcontent">
+        <h2>Date: <span class="day-date">12/2/2024</span></h2>
+        <h2 class="car-code"><span class="car-word">ا ط و</span> 1836</h2>
+        <div class="from-destination">
+          <div class="from flex-center"><div>From</div></div>
+          <span class="from-place">
+            مصر الوادى الجديد مركز الواحات الخارجة
+          </span>
+          <div class="from from-time flex-center"><div>10:11:47</div></div>
+        </div>
+        <div class="to-destination">
+          <div class="to flex-center"><div>To</div></div>
+          <span class="to-place">
+            مصر,الوادى الجديد,مركز الواحات الخارجة,,,
+          </span>
+          <div class="to to-time flex-center"><div>10:58:08</div></div>
+        </div>
+        <div class="more-info">
+          <div class="table">
+            <div class="row header-row">
+              <div class="cell">Max Speed</div>
+              <div class="cell">Distance</div>
+              <div class="cell">Total Time</div>
+            </div>
+            <div class="row">
+              <div class="cell max-speed">86 KM/H</div>
+              <div class="cell distance">253.35 KM</div>
+              <div class="cell total-time">15:28 H</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex-center">
+          <button class="record">Record Move</button>
+        </div>
+      </div>
+
+      <div id="Tab2" class="tabcontent">
+        <h3>Tab 2 Content</h3>
+        <p>This is the content of tab 2.</p>
+      </div>
+
+      <div id="Tab3" class="tabcontent">
+        <h3>Tab 3 Content</h3>
+        <p>This is the content of tab 3.</p>
+      </div>
     </div>
   </body>
   <script src="script.js"></script>
+  <script src="design.js"></script>
 </html>

@@ -1,11 +1,17 @@
 window.onload = onWindowLoad;
 
-function main() {
-  onWindowLoad();
-}
-
 function onWindowLoad() {
   var message = document.querySelector("#message");
+  let from = document.querySelector(".from-place");
+  let to = document.querySelector(".to-place");
+  let start = document.querySelector(".from-time");
+  let end = document.querySelector(".to-time");
+  let carNumber = document.querySelector(".car-code");
+  let dayDate = document.querySelector(".day-date");
+  let distance = document.querySelector(".distance");
+  let maxSpeed = document.querySelector(".max-speed");
+  let totalTime = document.querySelector(".total-time");
+  let tabContent = document.querySelector(".tabcontent");
   chrome.tabs
     .query({ active: true, currentWindow: true })
     .then(function (tabs) {
@@ -20,8 +26,20 @@ function onWindowLoad() {
       });
     })
     .then(function (results) {
-      console.log(results);
-      message.innerHTML = results[0].result;
+      if (results[0].result.tabContent !== undefined) {
+        tabContent.innerHTML = `<h2>Date: <span class="day-date">${results[0].result.dayDate}</span></h2>
+        <h2 class="car-code">${results[0].result.carNumber}</h2> <h2 class="car-code">${results[0].result.tabContent}</h2>`;
+      } else {
+        from.innerHTML = results[0].result.from;
+        to.innerHTML = results[0].result.to;
+        start.innerHTML = results[0].result.start;
+        end.innerHTML = results[0].result.end;
+        carNumber.innerHTML = results[0].result.carNumber;
+        dayDate.innerHTML = results[0].result.dayDate;
+        distance.innerHTML = results[0].result.totalDistance;
+        maxSpeed.innerHTML = results[0].result.maxSpeed;
+        totalTime.innerHTML = results[0].result.totalTime;
+      }
     })
     .catch(function (error) {
       message.innerHTML =
@@ -30,7 +48,7 @@ function onWindowLoad() {
 }
 
 function DOMtoString(selector) {
-  let result = "";
+  let result = {};
   if (selector) {
     selector = document.querySelector(selector);
     if (!selector) return "ERROR: querySelector failed to find node";
@@ -70,9 +88,12 @@ function DOMtoString(selector) {
       moved = false,
       backCheck = false;
     let totalDistance = 0;
+    let travelledDistance = 0;
+    maxSpeed = 0;
     let totalDistances = [];
+    let carNumber = moves[0]["Plate No."];
     let placeMoved = moves[0]["From Address"];
-
+    let dayDate = moves[0]["Start Date"].split(" ")[0];
     const indexOfFirstObject = moves.findIndex(
       (obj) => obj["Distance Travelled"] > 5
     );
@@ -127,11 +148,16 @@ function DOMtoString(selector) {
 
     backMoves = moves.map((move, index) => {
       // know if didn't move
+      travelledDistance += +move["Distance Travelled"];
       if (+move["Distance Travelled"] > biggestDistance) {
         biggestDistance = +move["Distance Travelled"];
       }
       if (placeMoved !== move["From Address"]) {
         placeMoved = true;
+      }
+
+      if (+move["Max Speed"] > maxSpeed) {
+        maxSpeed = +move["Max Speed"];
       }
 
       // get first move (fromAddress & startDate)
@@ -198,26 +224,91 @@ function DOMtoString(selector) {
       toAddress = "";
       startDate = "";
       EndDate = "";
-      result = `<div>لا يكــــــــــــــــــــــــن</div> <br/> <div><strong>Total Distance</strong> ${totalDistance}</div> `;
+      result.dayDate = dayDate;
+      result.carNumber = carNumber;
+      result.tabContent = `لا يكـــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــن`;
     } else if (fromAddress !== "") {
       console.log(fromAddress);
       console.log(toAddress);
       console.log(startDate);
       console.log(EndDate);
-      result = `<div><strong>From:</strong> ${fromAddress}</div> <br/>
-                <div><strong>To:</strong> ${toAddress}</div> <br/>
-                <div><strong>Start Move Time:</strong> ${startDate}</div> <br/>
-                <div><strong>End Move Time:</strong> ${EndDate}</div> <br/>
-                <div><strong>Total Distance</strong> ${totalDistance}</div> <br/>
-      `;
+      result.from = replaceCommas(removeExtraCommas(fromAddress));
+      result.to = replaceCommas(removeExtraCommas(toAddress));
+      result.start = startDate;
+      result.end = EndDate;
+      result.carNumber = carNumber;
+      result.dayDate = dayDate;
+      result.maxSpeed = `${maxSpeed.toFixed(2)} KM/H`;
+      result.totalDistance = `${travelledDistance.toFixed(2)} KM`;
+      var timeDifference = calculateTimeDifference(startDate, EndDate);
+      result.totalTime = `${timeDifference} H`;
     } else {
-      result = `<div><strong>totalDistance:</strong> ${totalDistance}</div> <br/>
-                <div><strong>moved:</strong> ${moved}</div> <br/>
-                <div><strong>backCheck:</strong> ${backCheck}</div> <br/>
-                <div><strong>placeMoved:</strong> ${placeMoved}</div> <br/>
-                <div><strong>From:</strong> ${fromAddress}</div> <br/>
-                <div><strong>biggestDistance:</strong> ${biggestDistance}</div> <br/>
-      `;
+      // result = `<div><strong>totalDistance:</strong> ${totalDistance}</div> <br/>
+      //           <div><strong>moved:</strong> ${moved}</div> <br/>
+      //           <div><strong>backCheck:</strong> ${backCheck}</div> <br/>
+      //           <div><strong>placeMoved:</strong> ${placeMoved}</div> <br/>
+      //           <div><strong>From:</strong> ${fromAddress}</div> <br/>
+      //           <div><strong>biggestDistance:</strong> ${biggestDistance}</div> <br/>
+      // `;
+    }
+    function calculateTimeDifference(time1, time2) {
+      // Parse input strings into Date objects
+      var parts1 = time1.split(":");
+      var parts2 = time2.split(":");
+      var date1 = new Date();
+      date1.setHours(
+        parseInt(parts1[0]),
+        parseInt(parts1[1]),
+        parseInt(parts1[2] || 0)
+      );
+      var date2 = new Date();
+      date2.setHours(
+        parseInt(parts2[0]),
+        parseInt(parts2[1]),
+        parseInt(parts2[2] || 0)
+      );
+
+      // Calculate time difference in milliseconds
+      var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+
+      // Convert time difference from milliseconds to hours, minutes, and seconds
+      var hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+      // Format the result
+      var result =
+        padWithZero(hours) +
+        ":" +
+        padWithZero(minutes) +
+        ":" +
+        padWithZero(seconds);
+      return result;
+    }
+    function removeExtraCommas(str) {
+      // Split the string by commas
+      var parts = str.split(",");
+
+      // Filter out empty elements
+      parts = parts.filter(function (part) {
+        return part.trim() !== ""; // Trim whitespace and check if the part is not empty
+      });
+
+      // Join the array back together with commas
+      return parts.join(",");
+    }
+
+    function replaceCommas(str) {
+      // Split the string by commas
+      var parts = str.split(",");
+
+      // Join the array back together with Arabic comma "،"
+      return parts.join(" ،  ");
+    }
+
+    // Helper function to pad numbers with leading zeros
+    function padWithZero(number) {
+      return (number < 10 ? "0" : "") + number;
     }
   }
   return result;
